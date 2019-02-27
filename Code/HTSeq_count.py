@@ -72,9 +72,10 @@ countVector6 = count_reads(SAM_Sample6)
 
 # Generate the count matrix by concatenating the vectors
 countMatrix = np.concatenate((countVector1, countVector2), axis = 1)
-
-for i in range(3,7):
-    countMatrix = np.concatenate((countMatrix, countVectori), axis = 1)
+countMatrix = np.concatenate((countMatrix, countVector3), axis = 1)
+countMatrix = np.concatenate((countMatrix, countVector4), axis = 1)
+countMatrix = np.concatenate((countMatrix, countVector5), axis = 1)
+countMatrix = np.concatenate((countMatrix, countVector6), axis = 1)
 
 # Also generate a list of gene names
 geneNames = []
