@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 import HTSeq
-import numpy
+import numpy as np
 
 # Import the SAM-files for all 6 samples
 SAM_Sample1 = HTSeq.SAM_Reader("Intermediate/Sample1.sam")
