@@ -66,8 +66,8 @@ fi
 # Change subdirectory and download the reference genome for Mycobacterium tuberculosis CDC1551 from Ensembl
 cd Reference_data
 wget ftp://ftp.ensemblgenomes.org/pub/release-42/bacteria//fasta/bacteria_6_collection/mycobacterium_tuberculosis_cdc1551/dna/Mycobacterium_tuberculosis_cdc1551.ASM858v1.dna.chromosome.Chromosome.fa.gz
-mv Mycobacterium_tuberculosis_cdc1551.ASM858v1.dna.chromosome.Chromosome.fa.gz Reference_genome.fa.gz
+mv Mycobacterium_tuberculosis_cdc1551.ASM858v1.dna.chromosome.Chromosome.fa.gz ReferenceGenome.fa.gz
 
 # Download gene annotation GTF-file for Mycobacterium tuberculosis from Ensembl
 wget ftp://ftp.ensemblgenomes.org/pub/release-42/bacteria//gtf/bacteria_6_collection/mycobacterium_tuberculosis_cdc1551/Mycobacterium_tuberculosis_cdc1551.ASM858v1.42.gtf.gz
-mv Mycobacterium_tuberculosis_cdc1551.ASM858v1.42.gtf.gz Gene_annotation.gtf.gz
+mv Mycobacterium_tuberculosis_cdc1551.ASM858v1.42.gtf.gz GeneAnnotation.gtf.gz
