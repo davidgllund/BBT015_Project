@@ -2,6 +2,7 @@
 
 import HTSeq
 import numpy as np
+import sys
 
 # Import the SAM-files for all 6 samples
 SAM_Sample1 = HTSeq.SAM_Reader("Intermediate/Sample1.sam")
@@ -29,24 +30,25 @@ for iv2, step_set in exons[iv].steps():
     else:
         iset.intersection_update(step_set)
 
+# Go through all of the reads, and, if it contains a single gene name, add a count for that gene
+counts = {}
+for feature in GTF_File:
+    if feature.type == "exon":
+        counts[feature.name] = 0
+        
 # Function that, given a SAM-file, counts the reads and returns a vector of gene counts for that sample
 def count_reads(SAM_file):
-# Go through all the reads, and, if it contains a single gene name, add a count for that gene
-    counts = {}
-    for feature in GTF_File:
-        if feature.type == "exon":
-            counts[feature.name] = 0
-
 # Count the reads in the SAM-file
     for alnmt in SAM_file:
-        iset = None
-        for iv2, step_set in exons[alnmt.iv].steps():
-            if iset is None:
-                iset = step_set.copy()
-            else:
-                iset.intersection_update(step_set)
-        if len(iset) == 1:
-            counts[list(iset)[0]] += 1
+        if alnmt.aligned:
+            iset = None
+            for iv2, step_set in exons[alnmt.iv].steps():
+                if iset is None:
+                    iset = step_set.copy()
+                else:
+                    iset.intersection_update(step_set)
+            if len(iset) == 1:
+                counts[list(iset)[0]] += 1
 
 # Initialize count vector as empty list 
     countVector = []
@@ -82,3 +84,40 @@ geneNames = []
 
 for name in sorted(counts.keys()):
     geneNames.append(name)
+
+# Export count matrix
+stringToExport = ""
+
+for row in countMatrix:
+    for column in row:
+        stringToExport += str(column) + '\t'
+
+    stringToExport += '\n'
+
+fileName = "countMatrix.tsv"
+
+# Check if successfully exported
+try:
+    fp = open(fileName, "w")
+    fp.write(stringToExport)
+    fp.close()
+except IOError:
+    print("Could not open countMatrix.tsv")
+    sys.exit(1)
+
+# Export list of gene names
+stringToExport = ""
+
+for row in geneNames:
+    stringToExport += str(row) + '\n'
+
+fileName = "geneNames.tsv"
+
+# Check if successfully exported
+try:
+    fp = open(fileName, "w")
+    fp.write(stringToExport)
+    fp.close()
+except IOError:
+    print("Could not open geneNames.tsv")
+    sys.exit(1)
