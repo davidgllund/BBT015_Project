@@ -4,10 +4,10 @@
 # Current directory should be Data
 
 if [ ! -d ../Intermediate/Fastq_Data ]; then
-echo "Intermediate fastq directory created"
-mkdir ../Intermediate/Fastq_Data
-mkdir ../Intermediate/Fastq_Data/Reference_Fastq_Data
-mkdir ../Intermediate/Fastq_Data/Sample_Fastq_Data
+    echo "Intermediate fastq directory created"
+    mkdir ../Intermediate/Fastq_Data
+    mkdir ../Intermediate/Fastq_Data/Reference_Fastq_Data
+    mkdir ../Intermediate/Fastq_Data/Sample_Fastq_Data
 fi
 
 #Unzipping files
@@ -45,13 +45,18 @@ fi
 #Converting fastq reference file to fasta
 
 cd Fasta_Data
-seqret -sequence ../Fastq_Data/Reference_Fastq_Data/ReferenceGenome.fastq -feature -fformat gff3 -osformat fasta ./ReferenceGenome.fasta
+
+if [ ! -f ./ReferenceGenome.fasta ]; then
+    seqret -sequence ../Fastq_Data/Reference_Fastq_Data/ReferenceGenome.fastq -feature -fformat gff3 -osformat fasta ./ReferenceGenome.fasta
+else
+    echo "ReferenceGenome.fasta already exists"
+fi
 
 cd ..
 
 if [ ! -d Reference_index_files ]; then
-echo "Directory for reference index files created"
-mkdir Reference_index_files
+    echo "Directory for reference index files created"
+    mkdir Reference_index_files
 fi
 
 #We need to create an index file for the reference genome
@@ -59,8 +64,8 @@ fi
 cd Reference_index_files
 
 if [ ! -f ReferenceGenome ]; then
-echo "Creating index file for reference genome..."
-bowtie2-build -f ../Fasta_Data/ReferenceGenome.fasta ReferenceGenome
+    echo "Creating index file for reference genome..."
+    bowtie2-build -f ../Fasta_Data/ReferenceGenome.fasta ReferenceGenome
 fi
 
 #Now align sample data to reference genome
@@ -68,8 +73,8 @@ fi
 cd ..
 
 if [ ! -d Sam_files ]; then
-echo "Directory for sam files created"
-mkdir Sam_files
+    echo "Directory for sam files created"
+    mkdir Sam_files
 fi
 
 cd Fastq_Data/Sample_Fastq_Data
@@ -81,7 +86,7 @@ for fastq in $FILES; do
 	echo "aligning $fastq..." 1>&2
 	bowtie2 -x ../../Reference_index_files/ReferenceGenome -U $fn.fastq -S ../../Sam_files/$fn.sam
     else
-	"sam files already exists"
+	"$fn.sam already exists"
     fi
 done
 
