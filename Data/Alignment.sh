@@ -24,7 +24,7 @@ done
 cd ..
 
 echo "unzipping the reference genome and placing it in Intermediate/Fastq_Data directory"
-gunzip -c ./Reference_data/ReferenceGenome.fastq.gz > ../Intermediate/Fastq_Data/Reference_Fastq_Data/ReferenceGenome.fastq
+gunzip -c ./Reference_data/ReferenceGenome.fa.gz > ../Intermediate/Fastq_Data/Reference_Fastq_Data/ReferenceGenome.fastq
 
 cd ../Intermediate
 
