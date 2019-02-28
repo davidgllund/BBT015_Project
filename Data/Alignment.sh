@@ -16,21 +16,29 @@ cd Sample_data
 
 FILES=*.gz
 for gz in $FILES; do
-echo "unzipping $gz and placing it in Intermediate/Fastq_Data directory " 1>&2
-fn=$(basename $gz .gz)
-gunzip -c $gz > ../../Intermediate/Fastq_Data/Sample_Fastq_Data/$fn
+    fn=$(basename $gz .gz)
+    if [ ! -f ../../Intermediate/Fastq_Data/Sample_Fastq_Data/$fn ]; then
+	echo "unzipping $gz and placing it in Intermediate/Fastq_Data directory " 1>&2
+	gunzip -c $gz > ../../Intermediate/Fastq_Data/Sample_Fastq_Data/$fn;
+    else
+	echo "Unzipped $gz fastq-file already exists"
+    fi
 done
 
 cd ..
 
-echo "unzipping the reference genome and placing it in Intermediate/Fastq_Data directory"
-gunzip -c ./Reference_data/ReferenceGenome.fastq.gz > ../Intermediate/Fastq_Data/Reference_Fastq_Data/ReferenceGenome.fastq
-
+if [ ! -f ../Intermediate/Fastq_Data/Reference_Fastq_Data/ReferenceGenome.fastq ]; then
+    echo "unzipping the reference genome and placing it in Intermediate/Fastq_Data directory"
+    gunzip -c ./Reference_data/ReferenceGenome.fastq.gz > ../Intermediate/Fastq_Data/Reference_Fastq_Data/ReferenceGenome.fastq
+else
+    echo "unzipped reference genome already exists"
+fi
+   
 cd ../Intermediate
 
 if [ ! -d Fasta_Data ]; then
-echo "Intermediate fasta directory created"
-mkdir Fasta_Data
+    echo "Intermediate fasta directory created"
+    mkdir Fasta_Data
 fi
 
 #Converting fastq reference file to fasta
@@ -67,9 +75,13 @@ cd Fastq_Data/Sample_Fastq_Data
 
 FILES=*.fastq
 for fastq in $FILES; do
-echo "aligning $fastq..." 1>&2
-fn=$(basename $fastq .fastq)
-bowtie2 -x ../../Reference_index_files/ReferenceGenome -U $fn.fastq -S ../../Sam_files/$fn.sam
+    fn=$(basename $fastq .fastq)
+    if [ ! -f ../../Sam_files/$fn.sam ]; then
+	echo "aligning $fastq..." 1>&2
+	bowtie2 -x ../../Reference_index_files/ReferenceGenome -U $fn.fastq -S ../../Sam_files/$fn.sam
+    else
+	"sam files already exists"
+    fi
 done
 
 echo "Done" 
