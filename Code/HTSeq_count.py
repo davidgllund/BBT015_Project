@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python
 
 # This script takes the SAM files generated from the bowtie2 alignment and the GTF gene annotation file that was downloaded from ensembl and generates a count matrix.
 # NOTE: This script should be run from the "Intermediate" directory.
@@ -67,21 +67,40 @@ def count_reads(sam_file):
     return countVector
 
 # Use the function to generate count vectors for all samples
+# Sample 1
+print("Counting reads for Sample 1")
 countVector1 = count_reads(samSample1)
+
+# Sample 2
+print("Counting reads for Sample 2")
 countVector2 = count_reads(samSample2)
+
+# Sample 3
+print("Counting reads for Sample 3")
 countVector3 = count_reads(samSample3)
+
+# Sample 4
+print("Counting reads for Sample 4")
 countVector4 = count_reads(samSample4)
+
+# Sample 5
+print("Counting reads for Sample 5")
 countVector5 = count_reads(samSample5)
+
+# Sample 6
+print("Counting reads for Sample 6")
 countVector6 = count_reads(samSample6)
 
 # Generate the count matrix by concatenating the vectors
+print("Generating count matrix")
 countMatrix = np.concatenate((countVector1, countVector2), axis = 1)
 countMatrix = np.concatenate((countMatrix, countVector3), axis = 1)
 countMatrix = np.concatenate((countMatrix, countVector4), axis = 1)
 countMatrix = np.concatenate((countMatrix, countVector5), axis = 1)
 countMatrix = np.concatenate((countMatrix, countVector6), axis = 1)
 
-# Also generate a list of gene names
+# Generate a list of gene names
+print("Extracting gene names")
 geneNames = []
 
 for name in sorted(counts.keys()):
