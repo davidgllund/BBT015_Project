@@ -18,29 +18,31 @@ samSample6 = HTSeq.SAM_Reader("Sam_files/Sample6.sam")
 # Import the GTF annotation file
 geneAnnotation = HTSeq.GFF_Reader("../Data/Reference_data/GeneAnnotation.gtf.gz")
 
-# Generate an array containing the annotated exons. Since the reads are strand specific the argument 'stranded = True' is used
-exons = HTSeq.GenomicArrayOfSets("auto", stranded = True)
-
-for feature in geneAnnotation:
-    if feature.type == "exon":
-        exons[feature.iv] += feature.name
-
-# Find the intersections of all overlapping exons
-    iset = None
-    for iv2, step_set in exons[feature.iv].steps():
-        if iset is None:
-            iset = step_set.copy()
-        else:
-            iset.intersection_update(step_set)
-
-# Go through all of the reads, and, if it contains a single gene name, add a count for that gene
-counts = {}
-for feature in geneAnnotation:
-    if feature.type == "exon":
-        counts[feature.name] = 0
-
 # Function that, given a SAM-file, counts the reads and returns a vector of gene counts for the corresponding sample
 def count_reads(sam_file):
+
+# Generate an array containing the annotated exons. Since the reads are strand specific the argument 'stranded = True' is used
+    exons = HTSeq.GenomicArrayOfSets("auto", stranded = True)
+
+# Generate an empty array to hold count data
+    counts = {}
+
+    for feature in geneAnnotation:
+        if feature.type == "exon":
+            exons[feature.iv] += feature.name
+
+# Find the intersections of all overlapping exons
+        iset = None
+        for iv2, step_set in exons[feature.iv].steps():
+            if iset is None:
+                iset = step_set.copy()
+            else:
+                iset.intersection_update(step_set)
+
+# If the read contains a single gene name, add a count for that gene
+        if feature.type == "exon":
+            counts[feature.name] = 0
+
     for alnmt in sam_file:
         if alnmt.aligned:
             iset = None
@@ -99,13 +101,6 @@ countMatrix = np.concatenate((countMatrix, countVector4), axis = 1)
 countMatrix = np.concatenate((countMatrix, countVector5), axis = 1)
 countMatrix = np.concatenate((countMatrix, countVector6), axis = 1)
 
-# Generate a list of gene names
-print("Extracting gene names")
-geneNames = []
-
-for name in sorted(counts.keys()):
-    geneNames.append(name)
-
 # Export count matrix
 stringToExport = ""
 
@@ -125,20 +120,4 @@ try:
 except IOError:
     print("Could not open countMatrix.tsv")
     sys.exit(1)
-
-# Export list of gene names
-stringToExport = ""
-
-for row in geneNames:
-    stringToExport += str(row) + '\n'
-
-fileName = "geneNames.tsv"
-
-# Check if successfully exported
-try:
-    fp = open(fileName, "w")
-    fp.write(stringToExport)
-    fp.close()
-except IOError:
-    print("Could not open geneNames.tsv")
-    sys.exit(1)
+    
